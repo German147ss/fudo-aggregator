@@ -8,7 +8,7 @@
 <body>
     <h1>Upload CSV/XLSX File</h1>
     <form id="uploadForm">
-        <input type="file" id="fileInput" accept=".csv, .xlsx" required />
+        <input type="file" id="fileInput" accept=".xlsx" required />
         <button type="submit">Upload</button>
     </form>
     <pre id="output"></pre>
@@ -16,6 +16,7 @@
     <script>
         document.getElementById('uploadForm').addEventListener('submit', async function(event) {
             event.preventDefault();
+            
             const fileInput = document.getElementById('fileInput');
             if (fileInput.files.length === 0) {
                 alert('Please select a file');
@@ -48,6 +49,11 @@
             } catch (error) {
                 alert(error.message);
             }
+        });
+
+        // Prevent the default form submission to ensure no unexpected reloads
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
         });
     </script>
 </body>
