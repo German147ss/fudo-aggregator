@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload CSV/XLSX</title>
+</head>
+<body>
+    <h1>Upload CSV/XLSX File</h1>
+    <form id="uploadForm">
+        <input type="file" id="fileInput" accept=".csv, .xlsx" required />
+        <button type="submit">Upload</button>
+    </form>
+    <pre id="output"></pre>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length === 0) {
+                alert('Please select a file');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // Upload the file
+                const uploadResponse = await fetch('http://localhost:8080/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!uploadResponse.ok) {
+                    throw new Error('File upload failed');
+                }
+
+                // Process the file
+                const processResponse = await fetch('http://localhost:8080/process');
+                if (!processResponse.ok) {
+                    throw new Error('File processing failed');
+                }
+
+                const jsonResponse = await processResponse.json();
+                document.getElementById('output').textContent = JSON.stringify(jsonResponse, null, 2);
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+    </script>
+</body>
+</html>
